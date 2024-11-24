@@ -1,5 +1,9 @@
+@description('Name of the project used to generate unique resource names.')
 param projectName string
+
+@description('ID of the Redis cache instance.')
 param redisId string
+
 resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' = {
   name: 'vnet-${projectName}'
   location: resourceGroup().location
@@ -48,7 +52,7 @@ resource mysqlPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
 
 resource mysqlPrivateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: mysqlPrivateDnsZone
-  name: '${projectName}-mysql-link'
+  name: 'mysql-link-${projectName}'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -65,7 +69,7 @@ resource redisPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
 
 resource redisPrivateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
   parent: redisPrivateDnsZone
-  name: '${projectName}-redis-link'
+  name: 'redis-link-${projectName}'
   location: 'global'
   properties: {
     registrationEnabled: false

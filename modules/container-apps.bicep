@@ -1,18 +1,31 @@
+@description('Name of the project used to generate unique resource names.')
 param projectName string
-param containerName string
+
+@description('ID of the Container Apps subnet.')
 param containerAppsSubnetId string
 
-param mysqlHost string
-param mysqlPort int
-param mysqlUser string
-param mysqlDatabase string
-@secure()
-param mysqlPassword string
+@description('Name of the container app.')
+param containerName string
 
+@description('Name of the MySQL flexible server.')
+param mysqlName string
+
+@description('Name of the Redis cache instance.')
 param redisName string
-param redisHost string
-param redisPort int
 
+@description('Name of the MySQL database.')
+param mysqlDatabase string
+
+@description('Admin password for MySQL server.')
+@secure()
+param mysqlAdminPassword string
+
+resource existingRedis 'Microsoft.Cache/redis@2023-08-01' existing = {
+  name: redisName
+}
+resource existingMysql 'Microsoft.DBforMySQL/flexibleServers@2023-06-01-preview' existing = {
+  name: mysqlName
+}
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' = {
   name: 'containerregistry${projectName}'
@@ -39,9 +52,6 @@ resource containerAppEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' 
   }
 }
 
-resource existingRedis 'Microsoft.Cache/redis@2023-08-01' existing = {
-  name: redisName
-}
 
 resource containerApps 'Microsoft.App/containerApps@2024-03-01' = {
   name: 'container-app-${projectName}'
@@ -79,19 +89,19 @@ resource containerApps 'Microsoft.App/containerApps@2024-03-01' = {
           env: [
             {
               name: 'MYSQL_HOST'
-              value: mysqlHost
+              value: replace(existingMysql.properties.fullyQualifiedDomainName, '.mysql.database.azure.com', '.private.mysql.database.azure.com')
             }
             {
               name: 'MYSQL_PORT'
-              value: string(mysqlPort)
+              value: '3306'
             }
             {
               name: 'MYSQL_USER'
-              value: mysqlUser
+              value: existingMysql.properties.administratorLogin
             }
             {
               name: 'MYSQL_PASSWORD'
-              value: mysqlPassword
+              value: mysqlAdminPassword
             }
             {
               name: 'MYSQL_DATABASE'
@@ -99,19 +109,19 @@ resource containerApps 'Microsoft.App/containerApps@2024-03-01' = {
             }
             {
               name: 'REDIS_HOST'
-              value: redisHost
+              value: existingRedis.properties.hostName
             }
             {
               name: 'REDIS_PORT'
-              value: string(redisPort)
+              value: '6380'
             }
             {
               name: 'REDIS_PASSWORD'
               value: existingRedis.listKeys().primaryKey
             }
             {
-              name: 'HELLO'
-              value: 'world'
+              name: 'REDIS_TLS'
+              value: 'true'
             }
           ]
         }

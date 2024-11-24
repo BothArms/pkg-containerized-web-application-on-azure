@@ -1,15 +1,25 @@
-param projectName string
-
+@description('ID of the MySQL subnet.')
 param mysqlSubnetId string
+
+@description('ID of the MySQL private DNS zone.')
 param mysqlPrivateDnsZoneId string
+
+@description('Name of the MySQL flexible server.')
+param mysqlName string
+
+@description('Admin username for MySQL server.')
 param mysqlUser string
+
+@description('Name of the MySQL database.')
 param mysqlDatabase string
+
+@description('Admin password for MySQL server.')
 @secure()
 param mysqlPassword string
 
 
 resource flexibleServer 'Microsoft.DBforMySQL/flexibleServers@2023-06-01-preview' = {
-  name: 'flexible-server-${projectName}'
+  name: mysqlName
   location: resourceGroup().location
   sku: {
     name: 'Standard_B1ms'
@@ -41,9 +51,4 @@ resource database 'Microsoft.DBforMySQL/flexibleServers/databases@2023-06-01-pre
     collation: 'utf8_general_ci'
   }
 }
-
-
-output hostname string = replace(flexibleServer.properties.fullyQualifiedDomainName,
-  '.mysql.database.azure.com',
-  '.private.mysql.database.azure.com')
 

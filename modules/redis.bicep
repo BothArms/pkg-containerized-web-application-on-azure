@@ -1,3 +1,4 @@
+@description('Name of the Redis cache instance.')
 param redisName string
 
 resource redis 'Microsoft.Cache/redis@2023-08-01' = {
@@ -20,4 +21,3 @@ resource redis 'Microsoft.Cache/redis@2023-08-01' = {
 }
 
 output redisId string = redis.id
-output redisHost string = '${redis.name}.redis.cache.windows.net'
