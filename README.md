@@ -11,8 +11,6 @@ Key features include:
 - **Secure Infrastructure with Private Networking**:
   The infrastructure utilizes Azure Container Apps in private virtual networks, implements multi-layer security with subnet isolation and private endpoints, and maintains regular security patches through managed container updates.
 
-- **Scalable Architecture with Auto Scaling**: The infrastructure leverages Azure Container Apps' built-in auto-scaling capabilities, automatically scaling containers based on HTTP traffic or custom metrics while maintaining high availability.
-
 ## Prerequisites
 
 1. **Azure Account**: An active Azure subscription with appropriate permissions to create and manage resources.
