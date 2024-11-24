@@ -2,7 +2,7 @@
 
 This project provides an optimized infrastructure for running a containerized web application on Azure.
 
-![Azure Architecture](/docs/architecture.svg)
+![Azure Architecture](/docs/architecture.drawio.svg)
 
 Key features include:
 
